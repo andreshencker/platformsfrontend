@@ -1,5 +1,5 @@
-import { api } from '@/lib/http';
-import { setAuthToken as storeToken, clearAuthToken as wipeToken } from '@/lib/storage';
+import { api } from '@/app/lib/http';
+import { setAuthToken as storeToken, clearAuthToken as wipeToken } from '@/app/lib/storage';
 import type { AuthResponse, ChangePasswordDto, LoginDto, RegisterDto } from '../types/auth';
 
 export async function login(dto: LoginDto): Promise<AuthResponse> {

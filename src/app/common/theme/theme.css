@@ -1,0 +1,109 @@
+:root {
+    /* light (fallbacks, no se usan si se setea data-theme) */
+    --color-bg: #FFFFFF;
+    --color-surface: #F7F9FC;
+    --color-border: #E6E8EC;
+    --color-text: #141A1F;
+    --color-text-muted: #6B7280;
+    --color-primary: #F0B90B;
+    --color-primary-contrast: #141A1F;
+    --color-success: #16A34A;
+    --color-danger: #DC2626;
+    --color-warning: #F59E0B;
+    --color-info: #2563EB;
+}
+
+/* DARK */
+:root[data-theme="dark"] {
+    --color-bg: #0B0E11;
+    --color-surface: #12161C;
+    --color-border: #2B3139;
+    --color-text: #EAECEF;
+    --color-text-muted: #B7BDC6;
+    --color-primary: #F0B90B;
+    --color-primary-contrast: #141A1F;
+    --color-success: #0ECB81;
+    --color-danger: #F6465D;
+    --color-warning: #F0B90B;
+    --color-info: #2B6AFF;
+}
+
+/* LIGHT */
+:root[data-theme="light"] {
+    --color-bg: #FFFFFF;
+    --color-surface: #F7F9FC;
+    --color-border: #E6E8EC;
+    --color-text: #141A1F;
+    --color-text-muted: #6B7280;
+    --color-primary: #F0B90B;
+    --color-primary-contrast: #141A1F;
+    --color-success: #16A34A;
+    --color-danger: #DC2626;
+    --color-warning: #F59E0B;
+    --color-info: #2563EB;
+}
+
+/* utilidades básicas */
+body {
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+.border { border: 1px solid var(--color-border); }
+.surface { background: var(--color-surface); }
+.text-muted { color: var(--color-text-muted); }
+.btn-primary {
+    background: var(--color-primary);
+    color: var(--color-primary-contrast);
+}
+
+/* ---- Panel hero (mismo estilo que el formulario) ------------------------ */
+.panel-hero {
+    position: relative;
+    background: var(--color-panel);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    padding: 18px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+}
+
+/* halo ámbar + leve brillo superior, igual que el form */
+.panel-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+            radial-gradient(1200px 260px at 40% 0%,
+            rgba(240, 185, 11, 0.09),
+            transparent 60%)
+            ,
+            linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0));
+}
+
+/* chip superior izquierda (LIST • MANAGE) */
+.chip {
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    font-size: 11px;
+    letter-spacing: .6px;
+    border: 1px solid rgba(240,185,11,.45);
+    color: #D0A909;
+    background: rgba(240,185,11,.08);
+    border-radius: 999px;
+    padding: 4px 10px;
+    user-select: none;
+}
+
+/* selección de tarjeta (igual al acento del form) */
+.card.is-selected {
+    border-color: rgba(240,185,11,.45);
+    background: rgba(240,185,11,.06);
+}
+
+/* helpers opcionales para inputs/controles dentro del panel */
+.panel-hero .input { height: 42px; }
+.panel-hero .select { height: 42px; }
+.panel-hero .btn { height: 42px; }

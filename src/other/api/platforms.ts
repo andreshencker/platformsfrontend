@@ -1,4 +1,4 @@
-import http from "@/lib/http";
+import http from "@/app/lib/http";
 
 export type PlatformCategory = "Broker" | "Exchange" | "Data";
 

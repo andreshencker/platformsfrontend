@@ -1,5 +1,5 @@
 // src/api/users.ts
-import http from "@/lib/http";
+import http from "@/app/lib/http";
 
 export type UserProfile = {
     id: string;

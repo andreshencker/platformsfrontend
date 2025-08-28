@@ -47,9 +47,9 @@ export default function adminsettings() {
                         </div>
                     </div>
 
-                    <Link to="/profile" className="btn btn-primary">
-                        View profile
-                    </Link>
+                    <Link to="/admin/userProfile" className="btn btn-primary">
+                    View profile
+                </Link>
                 </div>
             </section>
 
@@ -95,9 +95,9 @@ export default function adminsettings() {
                         </div>
                     </div>
 
-                    <Link to="admin/users" className="btn btn-primary">
-                        View Users
-                    </Link>
+                     <Link to="/admin/users" className="btn btn-primary">
+                    View profile
+                </Link>
                 </div>
             </section>
 

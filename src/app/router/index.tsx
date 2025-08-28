@@ -3,9 +3,9 @@ import { useRoutes } from "react-router-dom";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 
 // Grupos de rutas
-import { publicRoutes } from "./routers/public.routes";
-import { clientRoutes } from "./routers/client.routes";
-import { adminRoutes } from "./routers/admin.routes";
+import { publicRoutes } from "@/app/router/routes/public.routes";
+import { clientRoutes } from "@/app/router/routes/client.routes";
+import { adminRoutes } from "@/app/router/routes/admin.routes";
 
 // Un pequeño loader para el lazy
 function Loader() {

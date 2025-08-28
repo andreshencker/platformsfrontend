@@ -1,5 +1,5 @@
 // /src/api/binanceAccounts.ts
-import http from "@/lib/http";
+import http from "@/app/lib/http";
 
 /** ==== Tipos compartidos ==== */
 export type BinanceAccount = {

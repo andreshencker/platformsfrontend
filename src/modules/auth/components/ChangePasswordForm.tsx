@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { notify } from "@/lib/notify";
+import { notify } from "@/app/lib/notify";
 import { changePassword } from "@/modules/auth/api/auth";
 
 export default function ChangePasswordForm() {

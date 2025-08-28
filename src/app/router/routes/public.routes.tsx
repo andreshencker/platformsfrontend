@@ -2,13 +2,13 @@ import React, { lazy } from "react";
 import type { RouteObject } from "react-router-dom";
 
 // Layout público
-const PublicLayout  = lazy(() => import("@/modules/common/layout/public/PublicLayout"));
+const PublicLayout  = lazy(() => import("@/app/common/layout/public/PublicLayout"));
 // Páginas públicas
-const HomePage      = lazy(() => import("@/modules/common/pages/home"));
+const HomePage      = lazy(() => import("@/app/common/pages/home"));
 const LoginPage     = lazy(() => import("@/modules/auth/pages/login"));
 const RegisterPage  = lazy(() => import("@/modules/auth/pages/register"));
-const NotFound      = lazy(() => import("@/modules/common/pages/not-found"));
-const Unauthorized  = lazy(() => import("@/modules/common/pages/unauthorized"));
+const NotFound      = lazy(() => import("@/app/common/pages/not-found"));
+const Unauthorized  = lazy(() => import("@/app/common/pages/unauthorized"));
 
 /** Árbol de rutas para visitantes/no autenticados */
 export const publicRoutes: RouteObject[] = [

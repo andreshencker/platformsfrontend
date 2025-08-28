@@ -1,6 +1,6 @@
 // src/modules/userPlatforms/api/userPlatforms.ts
 
-import {  api } from "@/lib/http"; // usa tu wrapper (alias a axios/fetch)
+import {  api } from "@/app/lib/http"; // usa tu wrapper (alias a axios/fetch)
 
 // ---- Tipos ----
 export type UserPlatformStatus =

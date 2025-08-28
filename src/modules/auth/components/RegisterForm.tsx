@@ -1,7 +1,7 @@
 // src/modules/auth/components/RegisterForm.tsx
 import React, { useState } from "react";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
-import { notifyError, notifySuccess } from "@/lib/notify";
+import { notifyError, notifySuccess } from "@/app/lib/notify";
 
 type Form = {
     firstName: string;

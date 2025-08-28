@@ -16,8 +16,8 @@ import {
     clearSession,
 } from "../api/auth";
 import type { AuthUser, LoginDto, RegisterDto, UserRole } from "../types/auth";
-import { getAuthToken } from "@/lib/storage";
-import { ROUTES } from "@/lib/constants";
+import { getAuthToken } from "@/app/lib/storage";
+import { ROUTES } from "@/app/lib/constants";
 
 type AuthState = {
     user: AuthUser | null;

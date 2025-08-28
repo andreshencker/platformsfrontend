@@ -1,10 +1,10 @@
-// src/router/routers/client.routes.tsx
+// src/router/routes/client.routes.tsx
 import React, { lazy } from "react";
 import { Navigate } from "react-router-dom";
-import ClientLayout from "@/modules/common/layout/client/ClientLayout";
+import ClientLayout from "@/app/common/layout/client/ClientLayout";
 
-const ClientDashboard = lazy(() => import("@/modules/common/pages/client/clientdashboard"));
-const ClientSettings  = lazy(() => import("@/modules/common/pages/client/clientsettings"));
+const ClientDashboard = lazy(() => import("@/app/common/pages/client/clientdashboard"));
+const ClientSettings  = lazy(() => import("@/app/common/pages/client/clientsettings"));
 const Onboarding      = lazy(() => import("@/modules/integrations/onboard/pages/Onboarding"));
 
 export const clientRoutes = [

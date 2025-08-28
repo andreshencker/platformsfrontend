@@ -4,7 +4,7 @@ import { getSupportedPlatforms } from "@/modules/platforms/api/platforms";
 import { listMyBinanceAccounts } from "@/modules/integrations/binance/api/binanceAccounts";
 import { AppContextValue, AuthUser, BinanceAccount, Id, Platform, Session, UserRole } from "./types";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
-import { getItem, setItem, removeItem } from "@/lib/storage";
+import { getItem, setItem, removeItem } from "@/app/lib/storage";
 
 // Claves de persistencia
 const KEY_SEL_PLATFORM = "app:selected_platform";

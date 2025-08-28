@@ -1,60 +1,38 @@
-import {UserRole} from "@/modules/users/api/users";
+// src/modules/users/types/types.ts
+export type UserRole = "admin" | "client";
 
-export interface User {
-    id: string;
-    email: string;
+export type User = {
+    _id: string;
     firstName: string;
+    middleName?: string;
     lastName: string;
+    secondLastName?: string;
+    email: string;
     role: UserRole;
     isActive: boolean;
-    createdAt: string; // ISO
-    updatedAt: string; // ISO
-}
+    createdAt: string | Date;
+    updatedAt: string | Date;
+    avatarUrl?: string | null;
+};
 
-export interface Paginated<T> {
-    items: T[];
-    total: number;
-    page: number;
-    pageSize: number;
-}
+export type ListUsersParams = {
+    q?: string;
+    sort?: "created-desc" | "name-asc";
+};
 
-export interface ListUsersParams {
-    page?: number;
-    pageSize?: number;
-    q?: string;        // búsqueda libre
-    role?: UserRole;   // filtro por rol
-    active?: boolean;  // filtro por estado
-}
-
-export interface CreateUserDto {
+export type CreateUserDto = {
     firstName: string;
+    middleName?: string;
     lastName: string;
+    secondLastName?: string;
     email: string;
+    role: Exclude<UserRole, "client">; // admin puede crear “admin” u otros no-client
     password: string;
-    role: UserRole;
-}
+    isActive?: boolean;
+};
 
-export interface CreateAdminDto {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-}
+export type UpdateUserDto = Partial<
+    Omit<CreateUserDto, "password" | "role"> & { role: UserRole }
+>;
 
-export interface UpdateUserDto {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    password?: string; // si aplica
-}
-
-export interface UpdateUserRoleDto {
-    role: UserRole;
-}
-
-/** Estructura genérica de error del backend (ajústala si tu API usa otra) */
-export interface BackendError {
-    statusCode: number;
-    message: string | string[];
-    error?: string;
-}
+export type UpdateUserRoleDto = { role: UserRole };

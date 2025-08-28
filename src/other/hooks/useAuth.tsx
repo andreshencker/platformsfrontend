@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import http, { setAuthToken, clearAuthToken } from "@/lib/http";
+import http, { setAuthToken, clearAuthToken } from "@/app/lib/http";
 import type { RegisterDTO } from "@/other/types/register";
 import type { LoginDTO } from "@/other/types/login";
 import type { User } from "@/other/types/user";
