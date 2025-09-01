@@ -1,22 +1,18 @@
-import { useTheme } from './ThemeContext';
+// src/app/common/theme/ThemeSwitcher.tsx
+import * as React from "react";
+import { IconButton, Tooltip } from "@mui/material";
+import LightModeRounded from "@mui/icons-material/LightModeRounded";
+import DarkModeRounded from "@mui/icons-material/DarkModeRounded";
+import { useThemeMode } from "./AppThemeProvider";
 
-export function ThemeSwitcher() {
-    const { theme, toggle } = useTheme();
-
+export default function ThemeSwitcher() {
+    const { mode, toggle } = useThemeMode();
+    const isDark = mode === "dark";
     return (
-        <button
-            onClick={toggle}
-            className="btn-primary"
-            style={{
-                border: '1px solid var(--color-border)',
-                padding: '8px 12px',
-                borderRadius: 8,
-                background: 'var(--color-surface)',
-                color: 'var(--color-text)',
-            }}
-            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-        >
-            {theme === 'dark' ? '🌙 Dark' : '☀️ Light'}
-        </button>
+        <Tooltip title={isDark ? "Switch to light" : "Switch to dark"}>
+            <IconButton onClick={toggle} size="small" sx={{ ml: .5 }}>
+                {isDark ? <LightModeRounded /> : <DarkModeRounded />}
+            </IconButton>
+        </Tooltip>
     );
 }

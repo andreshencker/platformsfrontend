@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import Providers from "@/app/providers/Providers";
-import AppRouter from "@/app/router";
+import AppRouter from "@/app/router/AppRouter";
 import "@/app/styles/globals.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

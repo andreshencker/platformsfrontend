@@ -1,35 +1,57 @@
-// src/context/client/components/ClientNavbar.tsx
-import React from "react";
-import { Link, NavLink } from "react-router-dom";
-import { useAuth } from "@/modules/auth/hooks/useAuth";
+// src/app/common/layout/client/components/ClientNavbar.tsx
+import * as React from "react";
+import { AppBar, Box, IconButton, Toolbar, Typography, Button } from "@mui/material";
+import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import { useApp } from "@/app/context/AppContext";
+import { getPlatformNavByDbId } from "@/app/common/layout/client/clientNav";
+import { NavLink, useLocation } from "react-router-dom";
 
-export default function ClientNavbar() {
-    const { logout } = useAuth();
+type Props = { onToggleSidebar: () => void; headerH: number };
+
+export default function ClientNavbar({ onToggleSidebar, headerH }: Props) {
+    const { platformId } = useApp();
+    const navCfg = getPlatformNavByDbId(platformId);
+    const { pathname } = useLocation();
 
     return (
-        <header className="header">
-            <div className="container nav">
-                <Link to="/dashboard" className="row" aria-label="Home">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden>
-                        <circle cx="12" cy="12" r="10" fill="#ffd400"/>
-                        <path d="M8.5 12.5h7M12 9v7" stroke="#111119" strokeWidth="1.8" strokeLinecap="round"/>
-                    </svg>
-                    <strong style={{ fontSize: 16 }}>Client Panel</strong>
-                </Link>
+        <AppBar position="fixed" sx={{ height: headerH, justifyContent: "center", zIndex: t => t.zIndex.drawer + 1 }}>
+            <Toolbar sx={{ minHeight: headerH, gap: 1 }}>
+                <IconButton onClick={onToggleSidebar} size="small" sx={{
+                    width: 34, height: 34, borderRadius: 1.5, bgcolor: "background.paper", border: t => `1px solid ${t.palette.divider}`,
+                    color: "text.primary", "&:hover": { bgcolor: "background.paper" },
+                }}>
+                    <MenuRoundedIcon fontSize="small" />
+                </IconButton>
 
-                <nav className="row" style={{ gap: 18 }}>
-                    <NavLink to="/dashboard" className="btn btn-outline" style={{ padding: "10px 16px", borderRadius: 999 }}>
-                        Dashboard
-                    </NavLink>
-                    <NavLink to="/trades" className="btn btn-outline" style={{ padding: "10px 16px", borderRadius: 999 }}>
-                        Trades
-                    </NavLink>
-                    <NavLink to="/settings" className="btn btn-outline" style={{ padding: "10px 16px", borderRadius: 999 }}>
-                        Settings
-                    </NavLink>
-                    <button className="btn btn-primary" onClick={logout}>Log out</button>
-                </nav>
-            </div>
-        </header>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Box sx={{ width: 18, height: 18, borderRadius: 1, bgcolor: "primary.main" }} />
+                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Client Console</Typography>
+                </Box>
+
+                <Box sx={{ flexGrow: 1 }} />
+
+                {/* Top nav (rutas principales) */}
+                <Box sx={{ display: "flex", gap: .5 }}>
+                    {navCfg?.topNav.map((it) => {
+                        const active = pathname.startsWith(it.path);
+                        const Icon = it.icon;
+                        return (
+                            <Button
+                                key={it.path}
+                                component={NavLink as any}
+                                to={it.path}
+                                size="small"
+                                startIcon={<Icon fontSize="small" />}
+                                color={active ? "primary" : "inherit"}
+                                variant={active ? "contained" : "text"}
+                                sx={{ borderRadius: 1.5, textTransform: "none" }}
+                            >
+                                {it.label}
+                            </Button>
+                        );
+                    })}
+                </Box>
+            </Toolbar>
+        </AppBar>
     );
 }

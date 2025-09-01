@@ -1,13 +1,13 @@
 // src/modules/auth/components/RegisterForm.tsx
 import React, { useState } from "react";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
-import { notifyError, notifySuccess } from "@/app/lib/notify";
+import { Link } from "react-router-dom";
 
 type Form = {
     firstName: string;
-    middleName: string;       // opcional
+    middleName: string;      // opcional
     lastName: string;
-    secondLastName: string;   // opcional
+    secondLastName: string;  // opcional
     email: string;
     password: string;
     showPass: boolean;
@@ -34,21 +34,27 @@ export default function RegisterForm() {
 
     const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validaciones rápidas en cliente
+        const email = f.email.trim();
+        const pass = f.password;
+        const isEmail = /\S+@\S+\.\S+/.test(email);
+        if (!isEmail) return;         // puedes mostrar un mensaje si quieres
+        if (pass.length < 6) return;  // idem
+
         try {
             await register({
                 firstName: f.firstName.trim(),
                 middleName: f.middleName.trim() || undefined,
                 lastName: f.lastName.trim(),
                 secondLastName: f.secondLastName.trim() || undefined,
-                email: f.email.trim(),
-                password: f.password,
+                email,
+                password: pass,
             });
-            notifySuccess("Account created successfully!");
-            // redirección por rol la maneja useAuth (si así lo tienes)
-        } catch (err: any) {
-            const msg =
-                err?.response?.data?.message || err?.message || "Could not create account";
-            notifyError(msg);
+            // No mostramos toast aquí para no duplicar; useAuth ya lo hace
+            // La redirección por rol también la maneja useAuth.
+        } catch {
+            // useAuth ya gestiona los toasts de error
         }
     };
 
@@ -56,8 +62,8 @@ export default function RegisterForm() {
         loading ||
         !f.firstName.trim() ||
         !f.lastName.trim() ||
-        !f.email.trim() ||
-        !f.password.trim();
+        !/\S+@\S+\.\S+/.test(f.email.trim()) ||
+        f.password.length < 6;
 
     return (
         <form className="auth-card" onSubmit={onSubmit} autoComplete="on">
@@ -66,10 +72,9 @@ export default function RegisterForm() {
             </div>
             <h2 className="h2" style={{ margin: 0 }}>Create account</h2>
 
-
             <div className="spacer" />
 
-            {/* Nombres en una misma línea */}
+            {/* Nombres */}
             <div className="form-row">
                 <label style={{ fontWeight: 700, marginBottom: 8, display: "block" }}>
                     Name
@@ -95,7 +100,7 @@ export default function RegisterForm() {
                 </div>
             </div>
 
-            {/* Apellidos en una misma línea */}
+            {/* Apellidos */}
             <div className="form-row">
                 <label style={{ fontWeight: 700, marginBottom: 8, display: "block" }}>
                     Last name
@@ -135,7 +140,7 @@ export default function RegisterForm() {
                 />
             </div>
 
-            {/* Password + toggle en línea */}
+            {/* Password + toggle */}
             <div className="form-row">
                 <label style={{ fontWeight: 700 }}>Password</label>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 8 }}>
@@ -175,7 +180,7 @@ export default function RegisterForm() {
 
             <div className="helper-row">
                 <span>Already have an account?</span>
-                <a className="link" href="/login">Sign in</a>
+                <Link className="link" to="/login">Sign in</Link>
             </div>
         </form>
     );

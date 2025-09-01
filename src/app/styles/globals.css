@@ -412,3 +412,12 @@ hr.sep{ border:none; height:1px; background:#23233a; margin: 32px 0 }
 
 /* Panel contenedor (por consistencia) */
 .list-panel { height: 100%; }
+
+/* Shell spacing: el main nunca queda debajo del header */
+.app-shell .app-main {
+    padding-top: var(--app-header-h);
+    min-height: calc(100vh - var(--app-header-h));
+    padding-left: 0;
+    padding-right: 0;
+}
+

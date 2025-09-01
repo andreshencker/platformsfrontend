@@ -27,9 +27,7 @@ export default function LoginForm() {
     const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await login({ email: form.email.trim(), password: form.password });
-            toast.success("Welcome back!");
-            // La redirección ocurre dentro de useAuth (por rol).
+            await login(form.email.trim(), form.password);
         } catch (err: any) {
             const msg =
                 err?.response?.data?.message ||

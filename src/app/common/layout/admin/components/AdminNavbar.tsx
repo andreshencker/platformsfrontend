@@ -1,6 +1,6 @@
 // src/app/common/layout/admin/AdminNavbar.tsx
 import { NavLink } from "react-router-dom";
-import { ThemeSwitcher } from "@/app/common/theme/ThemeSwitcher";
+import { ThemeSwitcher } from "@/app/common/theme/other/ThemeSwitcher";
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
     `link${isActive ? " active" : ""}`;

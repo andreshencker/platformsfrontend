@@ -1,5 +1,5 @@
 import { api } from '@/app/lib/http';
-import type { BinanceAccount, CreateBinanceAccountDto, UpdateBinanceAccountDto } from './types';
+import type { BinanceAccount, CreateBinanceAccountDto, UpdateBinanceAccountDto } from '../types/binanceAccounts';
 
 const BASE = '/integrations/binance-accounts';
 

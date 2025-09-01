@@ -5,162 +5,233 @@ import React, {
     useEffect,
     useMemo,
     useState,
+    ReactNode,
 } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
-
+import toast from "react-hot-toast";
+import { api, setAuthHeader, clearAuthHeader } from "@/app/lib/http";
 import {
-    login as apiLogin,
-    register as apiRegister,
-    me as apiMe,
-    clearSession,
-} from "../api/auth";
-import type { AuthUser, LoginDto, RegisterDto, UserRole } from "../types/auth";
-import { getAuthToken } from "@/app/lib/storage";
-import { ROUTES } from "@/app/lib/constants";
+    getToken as loadToken,
+    setToken as saveToken,
+    clearToken,
+    getUser as loadUser,
+    setUser as saveUser,
+    clearUser,
+} from "@/app/lib/storage";
+import type { StoredUser } from "@/app/lib/storage";
 
-type AuthState = {
-    user: AuthUser | null;
-    loading: boolean;
-    ready: boolean;
-};
+/** ===== Tipos expuestos por el contexto (User se alinea con lo guardado en storage) ===== */
+type User = StoredUser;
 
-type AuthContextValue = AuthState & {
-    login: (dto: LoginDto) => Promise<void>;
-    register: (dto: RegisterDto) => Promise<void>;
-    logout: () => void;
-    hasRole: (roles: UserRole[]) => boolean;
+type AuthContextValue = {
+    user: User;
+    token: string | null;
+    isAuthenticated: boolean;
+
+    loading: boolean; // acción en curso (login/register/logout)
+    ready: boolean;   // bootstrap inicial completado
+
+    // acciones
+    login: (email: string, password: string) => Promise<void>;
+    register: (payload: Record<string, any>) => Promise<void>;
+    logout: () => Promise<void>;
+
+    // utilidades
     refreshMe: () => Promise<void>;
+    setUser: (u: User) => void;
+    setToken: (t: string | null) => void;
 };
 
-const Ctx = createContext<AuthContextValue | null>(null);
+const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = useState<AuthUser | null>(null);
+/** ===== Provider ===== */
+export function AuthProvider({ children }: { children: ReactNode }) {
+    const [user, setUserState] = useState<User>(null);
+    const [tokenState, setTokenState] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [ready, setReady] = useState(false);
 
-    const nav = useNavigate();
-    const loc = useLocation();
-    const qc = useQueryClient();
+    const isAuthenticated = !!tokenState;
 
-    const bootstrap = useCallback(async () => {
-        const token = getAuthToken();
-        if (!token) {
-            setReady(true);
-            return;
-        }
-        try {
+    /** ---- helpers de sesión (sin acoplar navegación) ---- */
+    const applyToken = useCallback((t: string | null) => {
+        setTokenState(t);
+        setAuthHeader(t);
+        if (t) saveToken(t);
+        else clearToken();
+    }, []);
+
+    const applyUser = useCallback((u: User) => {
+        setUserState(u);
+        saveUser(u);
+    }, []);
+
+    const clearSession = useCallback(() => {
+        setUserState(null);
+        setTokenState(null);
+        clearAuthHeader(); // ← quitar Authorization global de axios
+        clearUser();
+        clearToken();
+    }, []);
+
+    /** ---- bootstrap al montar (carga token+user y refresca /me si existe) ---- */
+    useEffect(() => {
+        (async () => {
+            try {
+                const storedToken = loadToken();
+                const storedUser = loadUser<User>();
+
+                if (storedToken) {
+                    applyToken(storedToken);
+                    // pintar user almacenado de forma optimista mientras se consulta /me
+                    setUserState(storedUser ?? null);
+
+                    try {
+                        const r = await api.get("/auth/me");
+                        const me: User = r?.data?.user ?? r?.data ?? null;
+                        if (me) applyUser(me);
+                    } catch {
+                        // si /me falla, invalidamos la sesión
+                        clearSession();
+                    }
+                } else {
+                    clearSession();
+                }
+            } finally {
+                setReady(true);
+            }
+        })();
+    }, [applyToken, applyUser, clearSession]);
+
+    /** ---- acciones ---- */
+    const login = useCallback(
+        async (email: string, password: string) => {
             setLoading(true);
-            const u = await apiMe();
-            setUser(u);
-        } catch {
+            try {
+                const { data } = await api.post("/auth/login", { email, password });
+
+                // soporta distintas claves que pueda devolver tu backend
+                const accessToken: string =
+                    data?.access_token ?? data?.accessToken ?? data?.token;
+
+                const me: User = data?.user ?? null;
+                if (!accessToken || !me) {
+                    throw new Error("Invalid login response");
+                }
+
+                applyToken(accessToken);
+                applyUser(me);
+                toast.success("Welcome!");
+                // la navegación se resuelve fuera (AppContext/AppRouter).
+            } catch (e: any) {
+                const msg =
+                    e?.response?.data?.message || e?.message || "Could not sign in";
+                toast.error(msg);
+                throw e;
+            } finally {
+                setLoading(false);
+                setReady(true);
+            }
+        },
+        [applyToken, applyUser]
+    );
+
+    const register = useCallback(
+        async (payload: Record<string, any>) => {
+            setLoading(true);
+            try {
+                const { data } = await api.post("/auth/register", payload);
+
+                const accessToken: string =
+                    data?.access_token ?? data?.accessToken ?? data?.token;
+
+                const me: User = data?.user ?? null;
+                if (!accessToken || !me) {
+                    throw new Error("Invalid register response");
+                }
+
+                applyToken(accessToken);
+                applyUser(me);
+                toast.success("Account created. Welcome!");
+            } catch (e: any) {
+                const msg =
+                    e?.response?.data?.message || e?.message || "Could not register";
+                toast.error(msg);
+                throw e;
+            } finally {
+                setLoading(false);
+                setReady(true);
+            }
+        },
+        [applyToken, applyUser]
+    );
+
+    const logout = useCallback(async () => {
+        setLoading(true);
+        try {
+            // opcional: await api.post("/auth/logout").catch(() => {});
             clearSession();
-            setUser(null);
+            toast.success("Signed out");
         } finally {
             setLoading(false);
             setReady(true);
         }
-    }, []);
-
-    useEffect(() => {
-        void bootstrap();
-    }, [bootstrap]);
-
-    /** Redirección por rol (para LOGIN) */
-    const redirectByRole = useCallback(
-        (role: UserRole) => {
-            if (role === "admin") {
-                nav(ROUTES.adminDashboard, { replace: true });
-            } else {
-                nav(ROUTES.clientDashboard, { replace: true });
-            }
-        },
-        [nav]
-    );
-
-    /** LOGIN: va por rol normal */
-    const login = useCallback(
-        async (dto: LoginDto) => {
-            setLoading(true);
-            try {
-                const res = await apiLogin(dto); // { user, access_token }
-                setUser(res.user);
-                qc.clear();
-                redirectByRole(res.user.role);
-            } finally {
-                setLoading(false);
-            }
-        },
-        [qc, redirectByRole]
-    );
-
-    /** REGISTER: si es client, SIEMPRE va al onboarding */
-    const register = useCallback(
-        async (dto: RegisterDto) => {
-            setLoading(true);
-            try {
-                const res = await apiRegister(dto); // { user, access_token }
-                setUser(res.user);
-                qc.clear();
-
-                if (res.user.role === "admin") {
-                    // Admin no hace onboarding
-                    nav(ROUTES.adminDashboard, { replace: true });
-                } else {
-                    // Client -> onboarding SIEMPRE tras registro
-                    nav(ROUTES.Onboarding, { replace: true });
-                }
-            } finally {
-                setLoading(false);
-            }
-        },
-        [qc, nav]
-    );
-
-    const logout = useCallback(() => {
-        clearSession();
-        setUser(null);
-        qc.clear();
-        const from =
-            loc.pathname.startsWith("/admin") || loc.pathname.startsWith("/client")
-                ? ROUTES.login
-                : loc.pathname;
-        nav(from, { replace: true });
-    }, [qc, nav, loc.pathname]);
-
-    const hasRole = useCallback(
-        (roles: UserRole[]) => {
-            if (!user) return false;
-            return roles.includes(user.role);
-        },
-        [user]
-    );
+    }, [clearSession]);
 
     const refreshMe = useCallback(async () => {
-        const u = await apiMe();
-        setUser(u);
-    }, []);
+        const t = loadToken();
+        if (!t) return;
+        try {
+            const r = await api.get("/auth/me");
+            const me: User = r?.data?.user ?? r?.data ?? null;
+            if (me) applyUser(me);
+        } catch {
+            clearSession();
+        }
+    }, [applyUser, clearSession]);
 
+    /** ---- setters públicos (por si los necesitas) ---- */
+    const setUserPublic = useCallback((u: User) => applyUser(u), [applyUser]);
+    const setTokenPublic = useCallback(
+        (t: string | null) => applyToken(t),
+        [applyToken]
+    );
+
+    /** ---- value del contexto ---- */
     const value = useMemo<AuthContextValue>(
         () => ({
             user,
+            token: tokenState,
+            isAuthenticated,
             loading,
             ready,
             login,
             register,
             logout,
-            hasRole,
             refreshMe,
+            setUser: setUserPublic,
+            setToken: setTokenPublic,
         }),
-        [user, loading, ready, login, register, logout, hasRole, refreshMe]
+        [
+            user,
+            tokenState,
+            isAuthenticated,
+            loading,
+            ready,
+            login,
+            register,
+            logout,
+            refreshMe,
+            setUserPublic,
+            setTokenPublic,
+        ]
     );
 
-    return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+/** ===== Hook de consumo ===== */
 export function useAuth() {
-    const ctx = useContext(Ctx);
+    const ctx = useContext(AuthContext);
     if (!ctx) throw new Error("useAuth must be used within <AuthProvider>");
     return ctx;
 }
