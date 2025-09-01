@@ -25,9 +25,16 @@ export default function ClientNavbar({ onToggleSidebar, headerH }: Props) {
     const { pathname } = useLocation();
 
     // popover de cuenta
-    const { logout, user } = useAuth();
+    const { logout } = useAuth();
     const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
     const navigate = useNavigate();
+
+    const [platformImage, setPlatformImage] = React.useState<string | null>(null);
+
+    React.useEffect(() => {
+        const img = localStorage.getItem("app.platformImage");
+        if (img) setPlatformImage(img.replace(/"/g, "")); // limpiar comillas
+    }, []);
 
     const openAccount = (e: React.MouseEvent<HTMLElement>) =>
         setAnchor(e.currentTarget);
@@ -53,7 +60,7 @@ export default function ClientNavbar({ onToggleSidebar, headerH }: Props) {
             }}
         >
             <Toolbar sx={{ minHeight: headerH, gap: 1 }}>
-                {/* Burger (si todavía lo usas) */}
+                {/* Burger */}
                 <IconButton
                     onClick={onToggleSidebar}
                     size="small"
@@ -87,7 +94,6 @@ export default function ClientNavbar({ onToggleSidebar, headerH }: Props) {
                         display: "flex",
                         gap: 0.5,
                         mr: 1,
-                        // en pantallas chicas puedes ocultar texto y dejar sólo iconos si quieres
                     }}
                 >
                     {navCfg?.topNav.map((it) => {
@@ -110,28 +116,45 @@ export default function ClientNavbar({ onToggleSidebar, headerH }: Props) {
                     })}
                 </Box>
 
-                {/* Botón de cuenta (abre popover estilo Google) */}
+                {/* Botón de cuenta (solo logo redondo estilo Google) */}
                 <ButtonBase
                     onClick={openAccount}
                     sx={{
-                        px: 1,
-                        py: 0.5,
-                        borderRadius: 1.5,
+                        p: 0.5,
+                        borderRadius: "50%",
                         border: 1,
                         borderColor: "divider",
                         bgcolor: "background.paper",
-                        maxWidth: 220,
+                        transition: "all 0.2s ease-in-out",
+                        "&:hover": {
+                            bgcolor: "grey.100",
+                            boxShadow: 1,
+                            transform: "scale(1.05)",
+                        },
                     }}
                     aria-label="open account menu"
                 >
-                    <Typography
-                        variant="body2"
-                        fontWeight={700}
-                        noWrap
-                        title={user?.email || "Account"}
-                    >
-                        {user?.email || "Account"}
-                    </Typography>
+                    {platformImage ? (
+                        <img
+                            src={platformImage}
+                            alt="Platform"
+                            style={{
+                                width: 32,
+                                height: 32,
+                                borderRadius: "50%",
+                                objectFit: "cover",
+                            }}
+                        />
+                    ) : (
+                        <Box
+                            sx={{
+                                width: 32,
+                                height: 32,
+                                borderRadius: "50%",
+                                bgcolor: "grey.400",
+                            }}
+                        />
+                    )}
                 </ButtonBase>
 
                 <AccountPopover
