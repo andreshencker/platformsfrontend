@@ -13,19 +13,15 @@ import {
 } from "@mui/material";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-
-// GET del perfil: /auth/me
-import { me as fetchMe } from "@/modules/auth/api/auth";
-// PATCH de mi perfil: /users/me
-import { updateMe } from "@/modules/users/api/users";
-import type { UpdateUserDto, User } from "@/modules/users/types/types";
+import { api } from "@/app/lib/http";
+import type { User, UpdateUserDto } from "@/modules/users/types/types";
 
 export default function ProfileForm() {
     const theme = useTheme();
     const isDark = theme.palette.mode === "dark";
     const qc = useQueryClient();
 
-    // ===== Estilo coherente + sin amarillo de autofill =====
+    // ====== Tokens/colores coherentes con tu UI ======
     const YELLOW = "#ffd400";
     const inputBg   = isDark ? "#141422" : "#ffffff";
     const inputBr   = isDark ? "#23233a" : "#e5e7eb";
@@ -40,6 +36,7 @@ export default function ProfileForm() {
         ? `0 30px 80px #00000055 inset, 0 10px 40px #00000055`
         : `0 12px 36px rgba(17,17,17,.06)`;
 
+    // Quitar “amarillo” del autofill y mantener texto legible
     const autofillFix = {
         "& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus": {
             WebkitBoxShadow: `0 0 0 1000px ${inputBg} inset !important`,
@@ -49,6 +46,7 @@ export default function ProfileForm() {
         },
     } as const;
 
+    // Estilo base de inputs
     const inputSx = {
         "& .MuiOutlinedInput-root": {
             backgroundColor: inputBg,
@@ -71,12 +69,20 @@ export default function ProfileForm() {
         ...autofillFix,
     } as const;
 
-    // ===== Datos: SOLO /auth/me =====
+    // ====== DATA: SOLO /auth/me ======
     const qMe = useQuery<User>({
         queryKey: ["me"],
-        queryFn: () => fetchMe(),
+        // Tu backend responde: { status, data: User }
+        queryFn: async () => {
+            const { data } = await api.get("/auth/me");
+            const user: User | undefined = data?.data ?? data?.user ?? data;
+            if (!user) throw new Error("Invalid /auth/me payload");
+            return user;
+        },
+        retry: 0,
     });
 
+    // Estado del form
     const [form, setForm] = React.useState<UpdateUserDto>({
         firstName: "",
         middleName: "",
@@ -84,6 +90,7 @@ export default function ProfileForm() {
         secondLastName: "",
     });
 
+    // Prefill al cargar /auth/me
     React.useEffect(() => {
         const u = qMe.data;
         if (u?._id) {
@@ -102,11 +109,15 @@ export default function ProfileForm() {
         qMe.data?.secondLastName,
     ]);
 
-    // ===== Guardar: /users/me =====
+    // ====== SAVE: PATCH /users/me ======
     const mUpdate = useMutation({
-        mutationFn: (dto: UpdateUserDto) => updateMe(dto),
+        mutationFn: async (dto: UpdateUserDto) => {
+            const { data } = await api.patch("/users/me", dto);
+            // Puede venir {status, data} o el user plano
+            return (data?.data ?? data) as User;
+        },
         onSuccess: (updated) => {
-            qc.setQueryData(["me"], updated); // refresca cache de /auth/me
+            qc.setQueryData(["me"], updated);
             toast.success("Profile updated successfully");
         },
         onError: (e: any) => {
@@ -125,7 +136,7 @@ export default function ProfileForm() {
         });
     };
 
-    // ===== Loading / Error =====
+    // ====== UI states ======
     if (qMe.isLoading) {
         return (
             <Box sx={{ display: "grid", placeItems: "center", minHeight: 220 }}>
@@ -141,7 +152,7 @@ export default function ProfileForm() {
         );
     }
 
-    // ===== UI =====
+    // ====== UI ======
     return (
         <Card
             variant="outlined"
@@ -184,7 +195,7 @@ export default function ProfileForm() {
 
                 <Box component="form" onSubmit={onSubmit}>
                     <Stack spacing={1.5}>
-                        {/* Email read-only (mismo estilo que el resto) */}
+                        {/* Email read-only con el mismo estilo visual */}
                         <TextField
                             variant="outlined"
                             placeholder="Email"
