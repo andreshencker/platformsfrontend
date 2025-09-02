@@ -1,169 +1,169 @@
-import React from "react";
-import { Link } from "react-router-dom";
+// src/app/pages/ClientSettings.tsx
+import * as React from "react";
+import {
+    Box,
+    Button,
+    Card,
+    CardContent,
+    Stack,
+    Typography,
+    useTheme,
+} from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
+import ThemeSwitcher from "@/app/common/theme/ThemeSwitcher";
 
-export default function Clientsettings() {
+export default function ClientSettings() {
+    const theme = useTheme();
+
     return (
-        <main className="container section">
-            <h1 className="h1">Settings</h1>
-            <p className="muted" style={{ marginTop: 8 }}>
-                Parámetros de conexión del frontend (solo lectura).
-            </p>
-
-            {/* Tarjeta de API */}
-            <section
-                style={{
-                    marginTop: 20,
-                    background: "var(--panel, #0f0f16)",
-                    border: "1px solid var(--border, #20202a)",
-                    borderRadius: 16,
-                    padding: 20,
+        <Box
+            component="main"
+            sx={{
+                maxWidth: 1080,
+                mx: "auto",
+                px: 2,
+                py: 0,
+                height: "100vh",
+                display: "flex",
+                flexDirection: "column",
+            }}
+        >
+            {/* Header fijo */}
+            <Box
+                sx={{
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 1,
+                    bgcolor: "background.default",
+                    borderBottom: 1,
+                    borderColor: "divider",
+                    py: 1,
                 }}
             >
-                <div
-                    className="row"
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr 1fr",
-                        gap: 16,
-                    }}
-                >
-                    <Field label="API Base" value="http://localhost:3000" />
-                    <Field label="API Key (x-api-key)" value="********" />
-                </div>
+                <Typography variant="h5" fontWeight={800}>
+                    Settings
+                </Typography>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                    Frontend connection parameters (read-only).
+                </Typography>
+            </Box>
 
-                <div className="row" style={{ marginTop: 20 }}>
-                    <a
-                        href="http://localhost:3000/api"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="btn btn-primary"
-                    >
-                        Abrir Swagger
-                    </a>
-                </div>
-            </section>
-
-            {/* NUEVA sección de perfil */}
-            <section
-                style={{
-                    marginTop: 20,
-                    background: "var(--panel, #0f0f16)",
-                    border: "1px solid var(--border, #20202a)",
-                    borderRadius: 16,
-                    padding: 20,
+            {/* Scroll solo para tarjetas */}
+            <Box
+                sx={{
+                    flex: 1,
+                    overflowY: "auto",
+                    pt: 1,
+                    pb: 2,
                 }}
             >
-                <div
-                    className="row"
-                    style={{
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                    }}
-                >
-                    <div>
-                        <div
-                            style={{
-                                fontSize: 14,
-                                color: "var(--muted, #8b8b99)",
-                                letterSpacing: 0.2,
-                            }}
-                        >
-                            Profile
-                        </div>
-                        <div style={{ fontSize: 16, fontWeight: 600 }}>
-                            User information
-                        </div>
-                        <div
-                            style={{
-                                fontSize: 13,
-                                color: "var(--muted, #8b8b99)",
-                                marginTop: 4,
-                            }}
-                        >
-                            See and manage your account details (name, email).
-                        </div>
-                    </div>
+                <Stack spacing={1}>
+                    {/* Tarjeta de Theme */}
+                    <Section
+                        title="Appearance"
+                        subtitle="Theme"
+                        helper="Change how the interface looks."
+                        action={<ThemeSwitcher />}
+                    />
 
-                    <Link to="/profile" className="btn btn-primary">
-                        View profile
-                    </Link>
-                </div>
-            </section>
+                    {/* Tarjeta de Profile */}
+                    <Section
+                        title="Profile"
+                        subtitle="User information"
+                        helper="See and manage your account details (name, email)."
+                        action={
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                component={RouterLink}
+                                to="/client/settings/profile" // ✅ absoluta
+                                sx={{ borderRadius: 0, fontWeight: 700 }}
+                            >
+                                View profile
+                            </Button>
+                        }
+                    />
 
-            <section
-                style={{
-                    marginTop: 20,
-                    background: "var(--panel, #0f0f16)",
-                    border: "1px solid var(--border, #20202a)",
-                    borderRadius: 16,
-                    padding: 20,
-                }}
-            >
-                <div
-                    className="row"
-                    style={{
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                    }}
-                >
-                    <div>
-                        <div
-                            style={{
-                                fontSize: 14,
-                                color: "var(--muted, #8b8b99)",
-                                letterSpacing: 0.2,
-                            }}
-                        >
-                            Integrations
-                        </div>
-                        <div style={{ fontSize: 16, fontWeight: 600 }}>
-                            Platforms & API Keys
-                        </div>
-                        <div
-                            style={{
-                                fontSize: 13,
-                                color: "var(--muted, #8b8b99)",
-                                marginTop: 4,
-                            }}
-                        >
-                            Manage and link your trading/data platforms. Add API keys
-                            for Binance, Interactive Brokers, and more.
-                        </div>
-                    </div>
-
-                    <Link to="/settings/integrations" className="btn btn-primary">
-                        Manage API
-                    </Link>
-                </div>
-            </section>
-
-
-        </main>
+                    {/* Tarjeta de Integrations */}
+                    <Section
+                        title="Integrations"
+                        subtitle="Platforms & API Keys"
+                        helper="Manage and link your trading/data platforms. Add API keys for Binance, Interactive Brokers, and more."
+                        action={
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                component={RouterLink}
+                                to="/client/settings/integrations" // ✅ absoluta
+                                sx={{ borderRadius: 0, fontWeight: 700 }}
+                            >
+                                Manage API
+                            </Button>
+                        }
+                    />
+                </Stack>
+            </Box>
+        </Box>
     );
 }
 
-function Field({ label, value }: { label: string; value: string }) {
+/** Sección reusable (todas cuadradas) */
+function Section({
+                     title,
+                     subtitle,
+                     helper,
+                     action,
+                 }: {
+    title: string;
+    subtitle: string;
+    helper?: string;
+    action?: React.ReactNode;
+}) {
+    const theme = useTheme();
+
     return (
-        <div>
-            <div
-                style={{
-                    fontSize: 12,
-                    color: "var(--muted, #8b8b99)",
-                    marginBottom: 6,
-                }}
-            >
-                {label}
-            </div>
-            <div
-                style={{
-                    padding: "12px 14px",
-                    borderRadius: 12,
-                    background: "var(--inputBg, #0b0b0e)",
-                    border: "1px solid var(--border, #20202a)",
-                }}
-            >
-                {value}
-            </div>
-        </div>
+        <Card
+            variant="outlined"
+            sx={{
+                bgcolor: "background.paper",
+                border: 1,
+                borderColor: "divider",
+                borderRadius: 0, // ◻️ todas cuadradas
+            }}
+        >
+            <CardContent sx={{ p: 2 }}>
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1.5,
+                        justifyContent: "space-between",
+                        flexWrap: "wrap",
+                    }}
+                >
+                    <Box sx={{ minWidth: 260 }}>
+                        <Typography
+                            variant="caption"
+                            sx={{ color: "text.secondary", letterSpacing: 0.2 }}
+                        >
+                            {title}
+                        </Typography>
+                        <Typography variant="subtitle1" fontWeight={700}>
+                            {subtitle}
+                        </Typography>
+                        {helper && (
+                            <Typography
+                                variant="body2"
+                                sx={{ mt: 0.3, color: "text.secondary" }}
+                            >
+                                {helper}
+                            </Typography>
+                        )}
+                    </Box>
+
+                    {action}
+                </Box>
+            </CardContent>
+        </Card>
     );
 }

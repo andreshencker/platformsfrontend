@@ -8,7 +8,7 @@ const BinanceDashboard = lazy(() => import("@/modules/integrations/binance/pages
 const BinanceSpot      = lazy(() => import("@/modules/integrations/binance/pages/client/BinanceSpot"));
 const BinanceFutures   = lazy(() => import("@/modules/integrations/binance/pages/client/BinanceFutures"));
 const BinanceMargin    = lazy(() => import("@/modules/integrations/binance/pages/client/BinanceMargin"));
-
+const ClientProfile  = lazy(() => import("@/modules/users/pages/client/ProfilePage"));
 
 export const clientRoutes = [
     { path: "/client/onboarding", element: <Onboarding /> },
@@ -23,6 +23,7 @@ export const clientRoutes = [
             { path: "binance/futures",   element: <BinanceFutures /> },
             { path: "binance/margin",    element: <BinanceMargin /> },
             { path: "settings", element: <ClientSettings /> },
+            { path: "settings/profile", element: <ClientProfile /> },
 
             // ⬇️ fallback para rutas no encontradas en /client
             { path: "*", element: <Navigate to="/client/binance/dashboard" replace /> },
