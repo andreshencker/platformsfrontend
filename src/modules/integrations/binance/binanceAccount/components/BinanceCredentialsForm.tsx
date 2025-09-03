@@ -12,7 +12,7 @@ import {
 
 import {
     createBinanceAccount,
-} from "@/modules/integrations/binance/api/binanceAccounts";
+} from "@/modules/integrations/binance/binanceAccount/api/binanceAccounts";
 
 // Si guardas el default en storage
 const DEFAULT_UP_STORAGE_KEY = "defaultUserPlatformId";

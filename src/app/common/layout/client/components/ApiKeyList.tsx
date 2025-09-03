@@ -11,7 +11,7 @@ import {
     Typography,
 } from "@mui/material";
 import VerifiedRoundedIcon from "@mui/icons-material/VerifiedRounded";
-import { listBinanceAccounts } from "@/modules/integrations/binance/api/binanceAccounts";
+import { listBinanceAccounts } from "@/modules/integrations/binance/binanceAccount/api/binanceAccounts";
 
 type BinanceAccountRow = {
     _id: string;

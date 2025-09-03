@@ -4,10 +4,10 @@ import { Navigate } from "react-router-dom";
 import ClientLayout from "@/app/common/layout/client/ClientLayout";
 const ClientSettings  = lazy(() => import("@/app/common/pages/client/clientsettings"));
 const Onboarding      = lazy(() => import("@/modules/integrations/onboard/pages/Onboarding"));
-const BinanceDashboard = lazy(() => import("@/modules/integrations/binance/pages/client/BinanceDashboard"));
-const BinanceSpot      = lazy(() => import("@/modules/integrations/binance/pages/client/BinanceSpot"));
-const BinanceFutures   = lazy(() => import("@/modules/integrations/binance/pages/client/BinanceFutures"));
-const BinanceMargin    = lazy(() => import("@/modules/integrations/binance/pages/client/BinanceMargin"));
+const BinanceDashboard = lazy(() => import("@/modules/integrations/binance/binanceAccount/pages/client/BinanceDashboard"));
+const BinanceSpot      = lazy(() => import("@/modules/integrations/binance/binanceAccount/pages/client/BinanceSpot"));
+const BinanceFutures   = lazy(() => import("@/modules/integrations/binance/binanceApi/futures/pages/BinanceFutures"));
+const BinanceMargin    = lazy(() => import("@/modules/integrations/binance/binanceAccount/pages/client/BinanceMargin"));
 const ClientProfile  = lazy(() => import("@/modules/users/pages/client/ProfilePage"));
 
 export const clientRoutes = [

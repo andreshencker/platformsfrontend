@@ -16,10 +16,10 @@ import type {
 // Binance: creación de credenciales sobre el userPlatform
 import {
     createBinanceAccount,
-} from "@/modules/integrations/binance/api/binanceAccounts";
+} from "@/modules/integrations/binance/binanceAccount/api/binanceAccounts";
 import type {
     CreateBinanceAccountDto,
-} from "@/modules/integrations/binance/types/binanceAccounts";
+} from "@/modules/integrations/binance/binanceAccount/types/binanceAccounts";
 
 /** UI del formulario para credenciales de Binance (label, key, secret) */
 function BinanceCredentialsForm(props: {

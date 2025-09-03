@@ -1,7 +1,7 @@
 import * as React from "react";
 import { FormControl, Select, MenuItem, Typography } from "@mui/material";
 import { useApp } from "@/app/context/AppContext";
-import { listBinanceAccounts } from "@/modules/integrations/binance/api/binanceAccounts";
+import { listBinanceAccounts } from "@/modules/integrations/binance/binanceAccount/api/binanceAccounts";
 
 type BinanceAccountRow = {
     _id: string;

@@ -15,7 +15,7 @@ import { useAuth } from '@/modules/auth/hooks/useAuth';
 import { storage } from '@/app/lib/storage';
 
 import { listUserPlatforms } from '@/modules/userPlatforms/api/userPlatforms';
-import { listBinanceAccounts } from '@/modules/integrations/binance/api/binanceAccounts';
+import { listBinanceAccounts } from '@/modules/integrations/binance/binanceAccount/api/binanceAccounts';
 
 // =========================
 // Tipos (shape real de la API)

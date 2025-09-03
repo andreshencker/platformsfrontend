@@ -1,4 +1,4 @@
-// /src/api/binanceAccounts.ts
+// /src/api/userSymbols.ts
 import http from "@/app/lib/http";
 
 /** ==== Tipos compartidos ==== */

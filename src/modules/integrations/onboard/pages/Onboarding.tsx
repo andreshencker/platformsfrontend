@@ -5,7 +5,7 @@ import PlatformSelect from "@/modules/platforms/components/PlatformSelect";
 import type { Platform } from "@/modules/platforms/types/platforms";
 
 // Formulario específico de Binance (el botón Connect está adentro)
-import BinanceCredentialsForm from "@/modules/integrations/binance/components/BinanceCredentialsForm";
+import BinanceCredentialsForm from "@/modules/integrations/binance/binanceAccount/components/BinanceCredentialsForm";
 
 const Onboarding: React.FC = () => {
     const [selected, setSelected] = useState<Platform | null>(null);
